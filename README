@@ -1,0 +1,26 @@
+Kurri Main Ring Simulation
+==========================
+
+Simulation model for the Kurri Main Ring.
+
+Running
+=======
+Lattices should be run from the root directory, for example
+
+path/to/opal lattices/KurriMainRingWithAcceleration/KurriMainRingWithAcceleration.in
+
+Directories
+===========
+Directories are:
+  - distributions: contain sample beam distributions
+  - fieldmaps: contain sample fieldmaps
+  - lattices: contain sample lattices
+  - scripts: any support scripts
+
+Release Notes
+=============
+0.0 - initial release
+
+
+
+

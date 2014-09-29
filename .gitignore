@@ -1,0 +1,9 @@
+*~
+timing.dat
+*.loss
+lattices/*/*-Angle?.dat
+lattices/*/*-afterEachTurn.dat
+lattices/*/*-trackOrbit.dat
+lattices/*/*.h5
+lattices/*/*.stat
+lattices/*/*.lbal
