@@ -1,6 +1,7 @@
 *~
 timing.dat
 *.loss
+*.pyc
 lattices/*/*-Angle?.dat
 lattices/*/*-afterEachTurn.dat
 lattices/*/*-trackOrbit.dat

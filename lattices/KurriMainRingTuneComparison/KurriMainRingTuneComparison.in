@@ -1,0 +1,88 @@
+Option, ECHO=TRUE;
+//////////////////////////////////////////////////////////////////////////////
+// Input file for single bunch tracking through KURRI ADS FFAG ring         //
+//////////////////////////////////////////////////////////////////////////////
+Title,string="KURRI ADS FFAG example simulation using OPAL code";
+Option, ASCIIDUMP=TRUE;
+Option, PSDUMPFREQ=2000000;
+Option, SPTDUMPFREQ=5;
+Option, REPARTFREQ=10;
+Option, REBINFREQ=1000;
+Option, PSDUMPEACHTURN=true;
+Option, PSDUMPLOCALFRAME=false;
+
+Edes=__energy__/1000; // GeV
+step_size_mm=__stepsize__; // mm
+n_turns=__nturns__;
+revolution_period=630.; // ns
+poly_order=__poly_order__;
+smooth_order=__smooth_order__;
+
+gamma=(Edes+PMASS)/PMASS;
+beta=sqrt(1-(1/gamma^2));
+p0 = gamma*beta*PMASS;
+brho = (PMASS*1.0e9*gamma*beta) / CLIGHT;
+
+// print to terminal
+value,{gamma,brho,Edes,beta,p0};
+
+step_size=step_size_mm/beta/CLIGHT*1e5; // ns
+max_steps=n_turns*revolution_period/step_size;
+steps_per_turn=revolution_period/step_size;
+frequency=1./revolution_period;
+
+r_closed_orbit=4249.37+42353.2*Edes-1.06978e+06*Edes^2+1.50301e+07*Edes^3-8.37681e+07*Edes^4;
+value,{step_size_mm, n_turns, revolution_period, step_size, max_steps, r_closed_orbit};
+
+probe_angle=0.*PI/6.;
+probe0: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+probe_angle=1.*PI/6.;
+probe1: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+probe_angle=2.*PI/6.;
+probe2: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+probe_angle=3.*PI/6.;
+probe3: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+probe_angle=4.*PI/6.;
+probe4: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+probe_angle=5.*PI/6.;
+probe5: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+probe_angle=6.*PI/6.;
+probe6: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+probe_angle=7.*PI/6.;
+probe7: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+probe_angle=8.*PI/6.;
+probe8: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+probe_angle=9.*PI/6.;
+probe9: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+probe_angle=10.*PI/6.;
+probe10: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+probe_angle=11.*PI/6.;
+probe11: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+
+r_init=4430.;
+triplet: SBEND3D, FMAPFN="fieldmaps/TOSCA_cyli13_massaged.H", LENGTH_UNITS=10., FIELD_UNITS=1e-3, POLYNOMIAL_ORDER=poly_order, SMOOTHING_ORDER=smooth_order;
+
+// 4.60193762e+03 at 11 MeV
+ringdef: RINGDEFINITION, HARMONIC_NUMBER=1, LATTICE_RINIT=r_init,
+         LATTICE_PHIINIT=15.0, LATTICE_THETAINIT=0.0, BEAM_PHIINIT=0., 
+         BEAM_PRINIT=0.0, BEAM_RINIT=4600., SYMMETRY=12.0, RFFREQ=frequency,
+         IS_CLOSED=true;
+
+l1: Line = (ringdef, triplet, probe0); // , probe1, probe2, probe3, probe4, probe5, probe6, probe7, probe8, probe9, probe10, probe11);
+
+Dist1: DISTRIBUTION, DISTRIBUTION=fromfile, FNAME="__beamfile__";
+
+Fs1:FIELDSOLVER, FSTYPE=FFT, MX=32, MY=32, MT=32, 
+		 PARFFTX=true, PARFFTY=true, PARFFTT=false,
+		 BCFFTX=open, BCFFTY=open, BCFFTT=open,BBOXINCR=2;
+
+// BFREQ has units of [MHz] weirdly
+beam1: BEAM, PARTICLE=PROTON, pc=p0, SPACECHARGE=false, NPART=1, 
+       BCURRENT=1.0E-19, CHARGE=1.0, BFREQ=1.e3/revolution_period;
+
+// step_size = 1/BFREQ/STEPSPERTURN
+track, line=l1, beam=beam1,MAXSTEPS=max_steps, STEPSPERTURN=revolution_period/step_size;
+run, file = "track_output", turns = 1, method = "CYCLOTRON-T", beam=beam1,
+     fieldsolver=Fs1, distribution=Dist1;
+endtrack;
+Stop;

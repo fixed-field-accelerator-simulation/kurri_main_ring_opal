@@ -4,11 +4,19 @@ Option, ECHO=TRUE;
 //////////////////////////////////////////////////////////////////////////////
 Title,string="KURRI ADS FFAG example simulation using OPAL code";
 Option, ASCIIDUMP=TRUE;
+Option, PSDUMPFREQ=2000000;
+Option, SPTDUMPFREQ=5;
+Option, REPARTFREQ=10;
+Option, REBINFREQ=1000;
+Option, PSDUMPEACHTURN=true;
+Option, PSDUMPLOCALFRAME=false;
 
-Edes=11.0/1000;
-step_size_mm=10; // mm
-n_turns=200.0003;
+Edes=11.0/1000; // GeV
+step_size_mm=10.0; // mm
+n_turns=20.001;
 revolution_period=630.; // ns
+poly_order=1;
+smooth_order=1;
 
 gamma=(Edes+PMASS)/PMASS;
 beta=sqrt(1-(1/gamma^2));
@@ -26,40 +34,48 @@ frequency=1./revolution_period;
 r_closed_orbit=4249.37+42353.2*Edes-1.06978e+06*Edes^2+1.50301e+07*Edes^3-8.37681e+07*Edes^4;
 value,{step_size_mm, n_turns, revolution_period, step_size, max_steps, r_closed_orbit};
 
-probe1: PROBE, xstart=0, xend=+6000., ystart=0, yend=0.;
+probe_angle=0.*PI/6.;
+probe0: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+probe_angle=1.*PI/6.;
+probe1: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+probe_angle=2.*PI/6.;
+probe2: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+probe_angle=3.*PI/6.;
+probe3: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+probe_angle=4.*PI/6.;
+probe4: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+probe_angle=5.*PI/6.;
+probe5: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+probe_angle=6.*PI/6.;
+probe6: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+probe_angle=7.*PI/6.;
+probe7: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+probe_angle=8.*PI/6.;
+probe8: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+probe_angle=9.*PI/6.;
+probe9: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+probe_angle=10.*PI/6.;
+probe10: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
+probe_angle=11.*PI/6.;
+probe11: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
 
-// 4.60193762e+03 at 11 MeV
-ringdef: RINGDEFINITION, HARMONIC_NUMBER=1, LATTICE_RINIT=4700.0,
-         LATTICE_PHIINIT=0.0, LATTICE_THETAINIT=0.0, BEAM_PHIINIT=0., 
-         BEAM_PRINIT=0.0, BEAM_RINIT=r_closed_orbit, SYMMETRY=1.0, RFFREQ=frequency,
-         IS_CLOSED=true; 
-
-// polynomial coefficients map energy 0.011+W [GeV] to frequency [GHz]
-rf_f0=+0.00158279;
-rf_f1=+0.0570222;
-rf_f2=-0.785013;
-rf_f3=+6.20161;
-// (mean) change in energy [GeV] per time [ns]
-dtdW=0.00001*rf_f0; // 0.0185 MeV = 18.5e-6 GeV per turn
-phi=2.*PI*(0.250+(0.02969));
-
-// polynomial coefficients map frequency [GHz] to time [ns]
-rf_p0=rf_f0;
-rf_p1=rf_f1*dtdW;
-rf_p2=rf_f2*dtdW^2;
-rf_p3=rf_f3*dtdW^3;
-
-rf_frequency: POLYNOMIAL_TIME_DEPENDENCE, P0=rf_p0, P1=rf_p1, P2=rf_p2, P3=rf_p3;
+phi = 0.;
+rf_frequency: POLYNOMIAL_TIME_DEPENDENCE, P0=1.;
 rf_amplitude: POLYNOMIAL_TIME_DEPENDENCE, P0=1.;
 rf_phase: POLYNOMIAL_TIME_DEPENDENCE, P0=phi;
 
-patch_offset: LOCAL_CARTESIAN_OFFSET, end_position_x=0.114049, end_position_y=0., end_normal_x=1., end_normal_y=0.;
-triplet: SBEND3D, FMAPFN="fieldmaps/tosca_map_f810_d1020_massaged.table", LENGTH_UNITS=10., FIELD_UNITS=1e-3;
-
+r_init=4430.;
+triplet: SBEND3D, FMAPFN="fieldmaps/TOSCA_cyli13_massaged.H", LENGTH_UNITS=10., FIELD_UNITS=1e-3, POLYNOMIAL_ORDER=poly_order, SMOOTHING_ORDER=smooth_order;
 rf_cavity: VARIABLE_RF_CAVITY, PHASE_MODEL="RF_PHASE", AMPLITUDE_MODEL="RF_AMPLITUDE", FREQUENCY_MODEL="RF_FREQUENCY", L=100., HEIGHT=200., WIDTH=2000.;
 cavity_offset: LOCAL_CARTESIAN_OFFSET, end_position_x=-50., end_position_y=0., end_normal_x=1., end_normal_y=0.;
 
-l1: Line = (ringdef, probe1, triplet, triplet, triplet, triplet, triplet, triplet, triplet, triplet, triplet, triplet, triplet, triplet , patch_offset, cavity_offset, rf_cavity, cavity_offset);
+// 4.60193762e+03 at 11 MeV
+ringdef: RINGDEFINITION, HARMONIC_NUMBER=1, LATTICE_RINIT=r_init,
+         LATTICE_PHIINIT=15.0, LATTICE_THETAINIT=0.0, BEAM_PHIINIT=0., 
+         BEAM_PRINIT=0.0, BEAM_RINIT=4411., SYMMETRY=1.0, RFFREQ=frequency,
+         IS_CLOSED=true;
+
+l1: Line = (ringdef, triplet, triplet, triplet, triplet, triplet, triplet, triplet, triplet, triplet, triplet, triplet, triplet, probe0, cavity_offset, rf_cavity, cavity_offset); // , probe1, probe2, probe3, probe4, probe5, probe6, probe7, probe8, probe9, probe10, probe11);
 
 Dist1: DISTRIBUTION, DISTRIBUTION=fromfile, FNAME="distributions/reference_particle.beam";
 

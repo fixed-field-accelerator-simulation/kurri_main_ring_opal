@@ -5,22 +5,41 @@ Simulation model for the Kurri Main Ring.
 
 Running
 =======
-Lattices should be run from the root directory, for example
+Lattices and scripts should be run from the root directory, for example
 
 path/to/opal lattices/KurriMainRingWithAcceleration/KurriMainRingWithAcceleration.in
+
+or
+
+python scripts/find_closed_orbits.py
+
 
 Directories
 ===========
 Directories are:
   - distributions: contain sample beam distributions
   - fieldmaps: contain sample fieldmaps
+    - TOSCA_cyli13.H: the original field map
+    - TOSCA_cyli13_massaged.H: massaged into a format that OPAL likes
   - lattices: contain sample lattices
-  - scripts: any support scripts
-
-Release Notes
-=============
-0.0 - initial release
-
-
-
-
+    - KurriMainRingTuneComparison: magnets only lattice, for closed orbit and
+                                   tune calculation
+    - KurriMainRingWithAcceleration: lattice with magnets and RF, for studies
+                                   of the acceleration cycle
+  - scripts: any support scripts. Rogers has a bunch of more-or-less generic
+             "accelerator" python scripts in xboa, which is available from
+             e.g. http://micewww.pp.rl.ac.uk/projects/x-boa/wiki. XBOA has
+             dependencies on python, ROOT and numpy/scipy, so these packages
+             also need to be installed.
+    - find_closed_orbits.py: Drive xboa to find closed orbits
+    - find_tune.py: Drive xboa to find tunes
+    - massage_field_map.py: Massage TOSCA field map into a format that OPAL
+             likes
+    - massage_field_map_2.py: Massage TOSCA field map into a format that OPAL
+             likes
+    - plot_closed_orbit.py: plot the closed orbit as a function of energy
+    - plot_orbit.py: plot an orbit as a function of x, y, z
+    - opal_tracking/_opal_tracking.py: compatibility layer for interface to
+             XBOA
+  - tmp: ephemeral tracking output goes here
+  - plots: ephemeral plots go here
