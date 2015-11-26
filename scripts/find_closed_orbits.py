@@ -53,6 +53,10 @@ def find_closed_orbit(energy, nturns, step, poly_order, smooth_order, seed):
     """
     print "Energy", energy, "NTurns", nturns, "StepSize", step, "Seed", seed, "Poly Order", poly_order, "Smooth Order", smooth_order
     tmp_dir = "tmp/find_closed_orbits/"
+    try:
+        os.makedirs(tmp_dir)
+    except:
+        pass
     subs = {
         '__energy__':energy,
         '__stepsize__':step,
@@ -92,7 +96,7 @@ def find_closed_orbit(energy, nturns, step, poly_order, smooth_order, seed):
     return tracking.last[0]
 
 if __name__ == "__main__":
-      next_seed = [4411.02, 0., 0.] # [5154.51, 0.0] # 
+      next_seed = [4415., 0., 0.] # [5154.51, 0.0] # 
       fout = open('find_closed_orbit.out', 'w')
       energy_list = range(11, 12, 1)
       for i, energy in enumerate(energy_list):
