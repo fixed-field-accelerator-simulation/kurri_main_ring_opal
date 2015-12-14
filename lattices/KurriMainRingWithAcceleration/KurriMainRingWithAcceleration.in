@@ -13,7 +13,7 @@ Option, PSDUMPLOCALFRAME=false;
 
 Edes=11.0/1000; // GeV
 step_size_mm=10.0; // mm
-n_turns=20.001;
+n_turns=1000.001;
 revolution_period=630.; // ns
 poly_order=1;
 smooth_order=1;
@@ -59,15 +59,15 @@ probe10: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*si
 probe_angle=11.*PI/6.;
 probe11: PROBE, xstart=0, xend=+6000.*cos(probe_angle), ystart=0, yend=+6000.*sin(probe_angle);
 
-phi = 0.;
-rf_frequency: POLYNOMIAL_TIME_DEPENDENCE, P0=1.;
-rf_amplitude: POLYNOMIAL_TIME_DEPENDENCE, P0=1.;
+phi = +PI/2+PI/6;
+rf_frequency: POLYNOMIAL_TIME_DEPENDENCE, P0=0.001741, P1=2.15376e-10, P2=-5.64549e-18, P3=1.5397e-25, P4=-2.49192e-33; // from scripts/find_rf_freq.py
+rf_amplitude: POLYNOMIAL_TIME_DEPENDENCE, P0=4.e-1; // 4e-1 MV/m, 10 mm long cavity => 4 kV total
 rf_phase: POLYNOMIAL_TIME_DEPENDENCE, P0=phi;
 
 r_init=4430.;
 triplet: SBEND3D, FMAPFN="fieldmaps/TOSCA_cyli13_massaged.H", LENGTH_UNITS=10., FIELD_UNITS=1e-3, POLYNOMIAL_ORDER=poly_order, SMOOTHING_ORDER=smooth_order;
-rf_cavity: VARIABLE_RF_CAVITY, PHASE_MODEL="RF_PHASE", AMPLITUDE_MODEL="RF_AMPLITUDE", FREQUENCY_MODEL="RF_FREQUENCY", L=100., HEIGHT=200., WIDTH=2000.;
-cavity_offset: LOCAL_CARTESIAN_OFFSET, end_position_x=-50., end_position_y=0., end_normal_x=1., end_normal_y=0.;
+rf_cavity: VARIABLE_RF_CAVITY, PHASE_MODEL="RF_PHASE", AMPLITUDE_MODEL="RF_AMPLITUDE", FREQUENCY_MODEL="RF_FREQUENCY", L=10., HEIGHT=200., WIDTH=2000.;
+cavity_offset: LOCAL_CARTESIAN_OFFSET, end_position_x=-5., end_position_y=0., end_normal_x=1., end_normal_y=0.;
 
 // 4.60193762e+03 at 11 MeV
 ringdef: RINGDEFINITION, HARMONIC_NUMBER=1, LATTICE_RINIT=r_init,
